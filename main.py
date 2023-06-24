@@ -1,18 +1,19 @@
 
 # classes
 class Game:
-    def __init__(self, running):
+    def __init__(self, running, turn):
         self.running = running
+        self.turn = 0
 
 
 class City:
-    def __init__(self, population, food, gold, land, might, influence, culture):
+    def __init__(self, population, food, gold, land, strength, influence, culture):
 
         self.population = population
         self.food = food
         self.gold = gold
         self.land = land
-        self.might = might
+        self.strength = strength
         self.influence = influence
         self.culture = culture
     # City getters
@@ -29,8 +30,8 @@ class City:
     def get_land(self):
         return self.land
 
-    def get_might(self):
-        return self.might
+    def get_strength(self):
+        return self.strength
 
     def get_infulence(self):
         return self.influence
@@ -52,14 +53,29 @@ class City:
     def set_land(self, value):
         self.land = value
 
-    def set_might(self, value):
-        self.might = value
+    def set_strength(self, value):
+        self.strength = value
 
     def set_influence(self, value):
         self.influence = value
 
     def set_culture(self, value):
         self.culture = value
+
+    # City methods
+    def show_city_stats(self):
+        print("")
+        print("CITY STATISTICS")
+        print("---------------")
+        print(f"Population: {self.get_population()}")
+        print(f"Food stockpile: {self.get_food()}")
+        print(f"Gold reserves: {self.get_gold()}")
+        print(f"Land area occupied: {self.get_land()}")
+        print("")
+        print(f"Military strength: {self.get_strength()}")
+        print(f"Influence level: {self.get_infulence()}")
+        print(f"Cultural richness: {self.get_culture()}")
+        print("")
 
 
 class Player:
@@ -83,7 +99,7 @@ def check_play_again():
     while True:
         player_name_str = player.get_name()
 
-        play_again = input("Do you want to play again? y/n")
+        play_again = input("Do you want to play again? y/n: ")
         if play_again.lower() == "y":
             print(f"Ok, {player_name_str}. You chose to play again.\n")
             game.running = True
@@ -107,8 +123,9 @@ print(f"Ok, {player_name_str}, get ready to play!\n")
 
 
 # start main game loop
-game = Game(True)
+game = Game(True, 0)
 
 while game.running:
+    city.show_city_stats()
     print("We have played the game!")
     check_play_again()
