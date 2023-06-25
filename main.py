@@ -47,25 +47,25 @@ class City:
     # City setters
 
     def set_population(self, value):
-        self.population = value
+        self.population += value
 
     def set_food(self, value):
-        self.food = value
+        self.food += value
 
     def set_gold(self, value):
-        self.gold = value
+        self.gold += value
 
     def set_land(self, value):
-        self.land = value
+        self.land += value
 
     def set_strength(self, value):
-        self.strength = value
+        self.strength += value
 
     def set_influence(self, value):
-        self.influence = value
+        self.influence += value
 
     def set_culture(self, value):
-        self.culture = value
+        self.culture = +value
 
     # City methods
     def show_city_stats(self):
@@ -84,6 +84,9 @@ class City:
 
 
 # unbound functions
+def increase_score(amount):
+    global score
+    score += amount
 
 
 def check_play_again():
@@ -113,6 +116,7 @@ game = Game(True)
 # Player set up
 print("")
 print("Welcome to the city of Ashkagar!")
+print("")
 
 while True:
     player_name = input("What is your name, mighty ruler? ")
@@ -126,6 +130,7 @@ while True:
 
 # start main game loop
 while game.running:
+    city.set_food(15)
     city.show_city_stats()
     print("We have played the game!")
     check_play_again()
