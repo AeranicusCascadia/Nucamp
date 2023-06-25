@@ -1,9 +1,14 @@
+# unbound variables
+player_name = "Anonymous"
+score = 0
+turn = 0
 
 # classes
+
+
 class Game:
-    def __init__(self, running, turn):
+    def __init__(self, running):
         self.running = running
-        self.turn = 0
 
 
 class City:
@@ -65,7 +70,7 @@ class City:
     # City methods
     def show_city_stats(self):
         print("")
-        print("CITY STATISTICS")
+        print(f"CITY STATISTICS    Turn {turn}, Score: {score}")
         print("---------------")
         print(f"Population: {self.get_population()}")
         print(f"Food stockpile: {self.get_food()}")
@@ -78,53 +83,48 @@ class City:
         print("")
 
 
-class Player:
-    def __init__(self, name, score):
-        self.name = name
-        self.score = score
-
-    # Players getters
-    def get_name(self):
-        return self.name
-    # Players setters
-
-    def set_name(self):
-        self.name = input("What is your name? ")
-
 # unbound functions
 
 
 def check_play_again():
 
     while True:
-        player_name_str = player.get_name()
 
         play_again = input("Do you want to play again? y/n: ")
         if play_again.lower() == "y":
-            print(f"Ok, {player_name_str}. You chose to play again.\n")
+            print(f"Ok, {player_name}. You chose to play again.\n")
             game.running = True
             break
         elif play_again.lower() == "n":
-            print(f"Ok, {player_name_str}. You chose not to play again.\n")
+            print(f"Ok, {player_name}. You chose not to play again.\n")
             game.running = False
             break
         else:
             print("Enter 'y' or 'n', please.")
 
 
-# city set up
+# city instantiate
 city = City(100, 150, 25, 50, 10, 10, 5)
 
-# player set up
-player = Player("Anonymous", 0)
-player.set_name()
-player_name_str = player.get_name()
-print(f"Ok, {player_name_str}, get ready to play!\n")
+# game instantiate
+game = Game(True)
 
+
+# Player set up
+print("")
+print("Welcome to the city of Ashkagar!")
+
+while True:
+    player_name = input("What is your name, mighty ruler? ")
+    if player_name != "":
+        print(
+            f"Very well, {player_name}. May your reign be long and prosperous!")
+        break
+    else:
+        print("")
+        print("Our scribes could not understand this. Please declare your name.")
 
 # start main game loop
-game = Game(True, 0)
-
 while game.running:
     city.show_city_stats()
     print("We have played the game!")
