@@ -88,6 +88,15 @@ class City:
         print(f"Cultural richness: {self.get_culture()}")
         print("")
 
+    def reset(self):
+        self.population = 100
+        self.food = 150
+        self.gold = 25
+        self.land = 50
+        self.strength = 10
+        self.influence = 10
+        self.culture = 10
+
 # unbound functions
 
 
@@ -98,6 +107,7 @@ def check_play_again():
         play_again = input("Do you want to play again? y/n: ")
         if play_again.lower() == "y":
             print(f"Ok, {player_name}. You chose to play again.\n")
+            city.reset()
             game.running = True
             break
         elif play_again.lower() == "n":
@@ -108,13 +118,39 @@ def check_play_again():
             print("Enter 'y' or 'n', please.")
 
 
-# city object instantiate
 city = City(100, 150, 25, 50, 10, 10, 5)
 
 
 class Turn:
     def __init__(self, pop_investment, acres_planted, trade, forrays, recruits, diplomacy, patronage):
-        pass
+        self.pop_investment = pop_investment
+        self.acres_planted = acres_planted
+        self.trade = trade
+        self.forrays = forrays
+        self.recruits = recruits
+        self.diplomacy = diplomacy
+        self.patronage = patronage
+
+    def choose_population_investment(self):
+        print("")
+        print(
+            f"How many units of gold (0-{city.get_gold()}) would you like to spend to encourage immigration from neighbooring kingdomw?")
+        pop_investment = input("--> ")
+        try:
+            pop_investment = int(pop_investment)
+            if pop_investment <= city.get_gold():
+                city.set_gold(-pop_investment)
+            else:
+                print("Looks like you cannot afford to invest that much gold.")
+                self.choose_population_investment()
+
+        except:
+            print(f"Please enter between 0-{city.get_gold()}.")
+            self.choose_population_investment()
+
+
+# turn object instantiate
+turn = Turn(0, 0, 0, 0, 0, 0, 0)
 
 
 # Player set up
@@ -134,7 +170,8 @@ while True:
 
 # start main game loop
 while game.running:
-    city.set_food(15)
     city.show_city_stats()
-    print("We have played the game!")
+    turn.choose_population_investment()
+    city.show_city_stats()
+
     check_play_again()
