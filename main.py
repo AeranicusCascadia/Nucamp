@@ -1,14 +1,19 @@
-# unbound variables
-player_name = "Anonymous"
-score = 0
-turn = 0
-
-# classes
-
 
 class Game:
-    def __init__(self, running):
+    def __init__(self, running, turn, score):
         self.running = running
+        self.turn = turn
+        self.score = score
+
+    def get_turn(self):
+        return self.turn
+
+    def get_score(self):
+        return self.score
+
+
+# game object instantiate
+game = Game(True, 0, 0)
 
 
 class City:
@@ -70,7 +75,8 @@ class City:
     # City methods
     def show_city_stats(self):
         print("")
-        print(f"CITY STATISTICS    Turn {turn}, Score: {score}")
+        print(
+            f"CITY STATISTICS    Turn {game.get_turn()}, Score: {game.get_score()}")
         print("---------------")
         print(f"Population: {self.get_population()}")
         print(f"Food stockpile: {self.get_food()}")
@@ -82,11 +88,7 @@ class City:
         print(f"Cultural richness: {self.get_culture()}")
         print("")
 
-
 # unbound functions
-def increase_score(amount):
-    global score
-    score += amount
 
 
 def check_play_again():
@@ -106,11 +108,13 @@ def check_play_again():
             print("Enter 'y' or 'n', please.")
 
 
-# city instantiate
+# city object instantiate
 city = City(100, 150, 25, 50, 10, 10, 5)
 
-# game instantiate
-game = Game(True)
+
+class Turn:
+    def __init__(self, pop_investment, acres_planted, trade, forrays, recruits, diplomacy, patronage):
+        pass
 
 
 # Player set up
