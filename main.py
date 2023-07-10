@@ -1,5 +1,6 @@
-# Still need a turn resetter method for player prompt values. Also for restarting game.
-
+# Need to define method: clear_vars_for_new_turn()
+# fix Turn.recruit.soldiers
+# Turn.sell_food seems like a good example
 
 class Game:
     def __init__(self, running, turn, score):
@@ -142,6 +143,9 @@ class Turn:
     def set_max_recruits(self):
         self.max_recruits += 1
 
+    def clear_vars_for_new_turn(self):
+        pass
+
     def choose_population_investment(self):
         print("")
         print(
@@ -224,29 +228,54 @@ class Turn:
     def recruit_soldiers(self):
         print("")
         print(
-            f"How many units of new troops (0-{turn.get_max_recruits()}) would you like to recruit into your military forces?")
+            f"How many units of new troops (0-{self.get_max_recruits()}) would you like to recruit into your military forces?")
         troops_recruited = input("--> ")
         try:
             troops_recruited = int(troops_recruited)
-            if (troops_recruited <= turn.get_max_recruits()) and (troops_recruited >= 0):
-                city.set_strength(+ troops_recruited)
+            if (troops_recruited <= self.get_max_recruits()) and (troops_recruited >= 0):
+                city.set_strength(+troops_recruited)
                 city.set_food(-troops_recruited)
                 city.set_gold(-troops_recruited)
-                self.recruits += self.recruits
+                self.recruits += troops_recruited
+            elif troops_recruited < 0:
+                print(
+                    f"Please enter a positive whole number between 0-{self.get_max_recruits()}.")
+                self.recruit_soldiers()
             else:
                 print(
-                    "Looks like you don't have enough food or gold to recruit that many troops.")
+                    "Looks like you don't have that much gold available to recruit troops.")
                 self.recruit_soldiers()
         except:
-            print(f"Please enter between 0-{turn.max_recruits()}.")
+            print(f"Please enter between 0-{self.get_max_recruits()}.")
             self.recruit_soldiers()
 
+        """ while True:
+            try:
+                int(troops_recruited)
+                break
+            except:
+                print(f"Please enter between 0-{str(self.max_recruits())}.")
+                self.recruit_soldiers()
+
+        if (int(troops_recruited) <= self.get_max_recruits()) and (troops_recruited >= 0):
+            city.set_strength(+ troops_recruited)
+            city.set_food(-troops_recruited)
+            city.set_gold(-troops_recruited)
+            self.recruits += self.recruits
+        else:
+            print(
+                "Looks like you don't have enough food or gold to recruit that many troops.")
+            self.recruit_soldiers() """
+
     def show_summary(self):
-        print(f"Investment in immigration: {turn.pop_investment}")
-        print(f"Acres of farmland planted: {turn.acres_planted}")
-        print(f"Food sold: {turn.food_sold}")
+        print("")
+        print(f"Invested gold to encourage immigration: {self.pop_investment}")
+        print(f"Acres of farmland planted with crops: {self.acres_planted}")
+        print(f"Food sold at market for gold: {self.food_sold}")
         print(
-            f"Military might sent on forrays into enemy territory: {turn.forrays_sent}")
+            f"Military units sent on forrays to capture enemy territory: {self.forrays_sent}")
+        print(
+            f"Fresh troops recruited into your military forces: {self.recruits}")
 
 
 # turn object instantiate
@@ -268,21 +297,20 @@ while True:
         print("")
         print("Our scribes could not understand this. Please declare your name.")
 
-# start main game loop
-while game.running:
 
+while game.running:  # start main game loop
+
+    # main game loop functions
     def run_player_prompts():
         turn.choose_population_investment()
         turn.plant_crops()
         turn.sell_food()
         turn.send_forrays()
-
-   # run_player_prompts()
+        turn.recruit_soldiers()
 
     city.show_city_stats()
-
     turn.calc_max_recruits(city.get_food(), city.get_gold())
-    turn.recruit_soldiers()
+    run_player_prompts()
     turn.show_summary()
     city.show_city_stats()
 
