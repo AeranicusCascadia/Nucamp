@@ -1,3 +1,5 @@
+# Still need a turn resetter method for player prompt values. Also for restarting game.
+
 
 class Game:
     def __init__(self, running, turn, score):
@@ -81,8 +83,7 @@ class City:
         print(f"Population: {self.get_population()}")
         print(f"Food stockpile: {self.get_food()}")
         print(f"Gold reserves: {self.get_gold()}")
-        print(f"Land area occupied: {self.get_land()}")
-        print("")
+        print(f"Land available: {self.get_land()}")
         print(f"Military strength: {self.get_strength()}")
         print(f"Influence level: {self.get_infulence()}")
         print(f"Cultural richness: {self.get_culture()}")
@@ -103,7 +104,7 @@ class City:
 def check_play_again():
 
     while True:
-
+        print("")
         play_again = input("Do you want to play again? y/n: ")
         if play_again.lower() == "y":
             print(f"Ok, {player_name}. You chose to play again.\n")
@@ -122,14 +123,24 @@ city = City(100, 150, 25, 50, 10, 10, 5)
 
 
 class Turn:
-    def __init__(self, pop_investment, acres_planted, trade, forrays, recruits, diplomacy, patronage):
+    def __init__(self, pop_investment, acres_planted, food_sold, forrays_sent, recruits, diplomacy, patronage):
         self.pop_investment = pop_investment
         self.acres_planted = acres_planted
-        self.trade = trade
-        self.forrays = forrays
+        self.food_sold = food_sold
+        self.forrays_sent = forrays_sent
         self.recruits = recruits
         self.diplomacy = diplomacy
         self.patronage = patronage
+
+    max_recruits = 0
+
+    # getter for max number of recruits this turn
+    def get_max_recruits(self):
+        return self.max_recruits
+
+    # setter for max number of recruits this turn
+    def set_max_recruits(self):
+        self.max_recruits += 1
 
     def choose_population_investment(self):
         print("")
@@ -140,13 +151,102 @@ class Turn:
             pop_investment = int(pop_investment)
             if pop_investment <= city.get_gold():
                 city.set_gold(-pop_investment)
+                self.pop_investment += pop_investment
             else:
                 print("Looks like you cannot afford to invest that much gold.")
                 self.choose_population_investment()
-
         except:
             print(f"Please enter between 0-{city.get_gold()}.")
             self.choose_population_investment()
+
+    def plant_crops(self):
+        print("")
+        print(
+            f"How many acres of land (0-{city.get_land()}) would you like to plant to with food crops?")
+        acres_planted = input("--> ")
+        try:
+            acres_planted = int(acres_planted)
+            if acres_planted <= city.get_land():
+                city.set_land(-acres_planted)
+                self.acres_planted += acres_planted
+            else:
+                print("Looks like you don't have that much land available to plant.")
+                self.plant_crops()
+        except:
+            print(f"Please enter between 0-{city.get_land()}.")
+            self.plant_crops()
+
+    def sell_food(self):
+        print("")
+        print(
+            f"How many bushels of food (0-{city.get_food()}) would you like to sell at the market?")
+        food_sold = input("--> ")
+        try:
+            food_sold = int(food_sold)
+            if food_sold <= city.get_food():
+                city.set_food(-food_sold)
+                self.food_sold += food_sold
+            else:
+                print(
+                    "Looks like you don't have that much food available to sell at market.")
+                self.sell_food()
+        except:
+            print(f"Please enter between 0-{city.get_land()}.")
+            self.sell_food()
+
+    def send_forrays(self):
+        print("")
+        print(
+            f"How many units of soldiers  (0-{city.get_strength()}) would you like to send on forrays to try to capture territory?")
+        forrays_sent = input("--> ")
+        try:
+            forrays_sent = int(forrays_sent)
+            if forrays_sent <= city.get_strength():
+                city.set_strength(-forrays_sent)
+                self.forrays_sent += forrays_sent
+            else:
+                print(
+                    "Looks like you don't have enough military strength to send out that many forrays to capture land.")
+                self.send_forrays()
+        except:
+            print(f"Please enter between 0-{city.get_strength()}.")
+            self.send_forrays()
+
+    def calc_max_recruits(self, food_input, gold_input):
+        if (food_input < 1) or (gold_input < 1):
+            print("Looks like you are lacking either gold or food.")
+            self.max_recruits = 0
+        else:
+            self.max_recruits = ((gold_input + food_input)) // 2
+            print(
+                f"You have enough gold and food for {self.max_recruits} troops.")
+
+    def recruit_soldiers(self):
+        print("")
+        print(
+            f"How many units of new troops (0-{turn.get_max_recruits()}) would you like to recruit into your military forces?")
+        troops_recruited = input("--> ")
+        try:
+            troops_recruited = int(troops_recruited)
+            if (troops_recruited <= turn.get_max_recruits()) and (troops_recruited >= 0):
+                city.set_strength(+ troops_recruited)
+                city.set_food(-troops_recruited)
+                city.set_gold(-troops_recruited)
+                self.recruits += self.recruits
+            else:
+                print(
+                    "Looks like you don't have enough food or gold to recruit that many troops.")
+                self.recruit_soldiers()
+        except:
+            print(f"Please enter between 0-{turn.max_recruits()}.")
+            self.recruit_soldiers()
+
+    def show_summary(self):
+        print(f"Investment in immigration: {turn.pop_investment}")
+        print(f"Acres of farmland planted: {turn.acres_planted}")
+        print(f"Food sold: {turn.food_sold}")
+        print(
+            f"Military might sent on forrays into enemy territory: {turn.forrays_sent}")
 
 
 # turn object instantiate
@@ -170,8 +270,20 @@ while True:
 
 # start main game loop
 while game.running:
+
+    def run_player_prompts():
+        turn.choose_population_investment()
+        turn.plant_crops()
+        turn.sell_food()
+        turn.send_forrays()
+
+   # run_player_prompts()
+
     city.show_city_stats()
-    turn.choose_population_investment()
+
+    turn.calc_max_recruits(city.get_food(), city.get_gold())
+    turn.recruit_soldiers()
+    turn.show_summary()
     city.show_city_stats()
 
     check_play_again()
