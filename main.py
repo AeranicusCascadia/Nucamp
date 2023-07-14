@@ -55,7 +55,10 @@ def main():
             print(
                 f"Congradulations! You have survived the full {self.length} turns.")
             print(f"Final Score: {self.get_score()}")
-            exit()
+            if self.ask_play_again():
+                main()
+            else:
+                exit()
 
     # game object instantiate
     game = Game(0, 0, 10)
